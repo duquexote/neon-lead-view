@@ -61,7 +61,16 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				'neon-orange': 'hsl(var(--neon-orange))',
+				'neon-orange-light': 'hsl(var(--neon-orange-light))',
+				'neon-orange-dark': 'hsl(var(--neon-orange-dark))',
+				'chart-grid': 'hsl(var(--chart-grid))',
+				'dashboard-bg': 'hsl(var(--dashboard-bg))',
+				'kpi-card': 'hsl(var(--kpi-card))',
+				'table-header': 'hsl(var(--table-header))',
+				'table-row': 'hsl(var(--table-row))',
+				'table-row-hover': 'hsl(var(--table-row-hover))'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
