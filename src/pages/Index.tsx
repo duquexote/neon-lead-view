@@ -5,7 +5,7 @@ import { LeadsTable } from "@/components/dashboard/LeadsTable";
 import { FilterBar } from "@/components/dashboard/FilterBar";
 import { filterLeadsByDate } from "@/utils/dateFilters";
 import { calculateKPIs, getLeadsByPeriod, formatCurrency } from "@/utils/dashboardAnalytics";
-import { BarChart3, Users, TrendingUp, DollarSign } from "lucide-react";
+import { BarChart3, Users, TrendingUp, DollarSign, Calendar } from "lucide-react";
 import { fetchLeads } from "@/services/leadService";
 import { Lead } from "@/lib/supabase";
 import { useQuery } from "@tanstack/react-query";
@@ -106,8 +106,8 @@ const Index = () => {
           />
         </div>
 
-        {/* Tag com mais potencial */}
-        <div className="mb-6">
+        {/* Tag com mais potencial e Média de Leads por Dia */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <KPICard
             title="TAG com mais Potencial"
             value={kpis.highestPotentialTag}
@@ -115,6 +115,13 @@ const Index = () => {
             trend="up"
             trendValue="+"
             highlight={true}
+          />
+          <KPICard
+            title="Média de Leads por Dia"
+            value={kpis.averageLeadsPerDay}
+            subtitle="Leads captados por dia"
+            trend="neutral"
+            trendValue="diário"
           />
         </div>
         

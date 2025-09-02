@@ -44,6 +44,16 @@ export const calculateKPIs = (leads: Lead[]) => {
   // Número de leads com valores altos para a tag com mais potencial
   const highestPotentialTagCount = highestPotentialTag !== "Sem tag" ? 
     highValueLeadsByTag[highestPotentialTag] : 0;
+    
+  // Cálculo de média de leads por dia
+  const dateMap = leads.reduce((acc, lead) => {
+    const date = lead.created_at.split('T')[0]; // Formato YYYY-MM-DD
+    acc[date] = (acc[date] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+  
+  const uniqueDays = Object.keys(dateMap).length;
+  const averageLeadsPerDay = uniqueDays > 0 ? (totalLeads / uniqueDays).toFixed(1) : '0';
 
   // Faturamento potencial total
   const totalRevenuePotential = leads.reduce((sum, lead) => {
@@ -64,6 +74,7 @@ export const calculateKPIs = (leads: Lead[]) => {
     worstPerformingTag,
     highestPotentialTag,
     highestPotentialTagCount,
+    averageLeadsPerDay,
     totalRevenuePotential,
     chartDataByTag
   };
