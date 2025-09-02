@@ -1,6 +1,6 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
-import { Lead } from "@/data/mockLeads";
+import { Lead } from "@/lib/supabase";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -13,7 +13,8 @@ export const LeadsTable = ({ leads }: LeadsTableProps) => {
     return format(new Date(dateString), "dd/MM/yyyy HH:mm", { locale: ptBR });
   };
 
-  const getTagColor = (tag: string) => {
+  const getTagColor = (tag: string | null) => {
+    if (!tag) return "text-muted-foreground";
     if (tag.includes("BIO IGOR")) return "text-neon-orange";
     if (tag.includes("CR 1")) return "text-blue-400";
     if (tag.includes("CR 2")) return "text-green-400";
@@ -22,7 +23,8 @@ export const LeadsTable = ({ leads }: LeadsTableProps) => {
     return "text-muted-foreground";
   };
 
-  const getFatDepositoColor = (fatDeposito: string) => {
+  const getFatDepositoColor = (fatDeposito: string | null) => {
+    if (!fatDeposito) return "text-muted-foreground";
     if (fatDeposito === "+500k") return "text-neon-orange font-semibold";
     if (fatDeposito === "até 500k") return "text-green-400";
     if (fatDeposito === "até 250k") return "text-yellow-400";

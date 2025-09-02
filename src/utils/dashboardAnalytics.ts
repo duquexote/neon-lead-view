@@ -1,4 +1,4 @@
-import { Lead, fatDepositoValues } from "@/data/mockLeads";
+import { Lead, fatDepositoValues } from "@/lib/supabase";
 import { format, parseISO, subDays } from "date-fns";
 
 export const calculateKPIs = (leads: Lead[]) => {
@@ -6,14 +6,44 @@ export const calculateKPIs = (leads: Lead[]) => {
   
   // Leads por tag
   const leadsByTag = leads.reduce((acc, lead) => {
-    acc[lead.tag] = (acc[lead.tag] || 0) + 1;
+    if (lead.tag) {
+      acc[lead.tag] = (acc[lead.tag] || 0) + 1;
+    }
     return acc;
   }, {} as Record<string, number>);
 
   // Tag com melhor performance
-  const bestPerformingTag = Object.entries(leadsByTag).reduce((a, b) => 
-    leadsByTag[a[0]] > leadsByTag[b[0]] ? a : b
-  )[0];
+  const bestPerformingTag = Object.entries(leadsByTag).length > 0 
+    ? Object.entries(leadsByTag).reduce((a, b) => 
+        leadsByTag[a[0]] > leadsByTag[b[0]] ? a : b
+      )[0]
+    : "Sem tag";
+    
+  // Tag com pior performance (menos leads)
+  const worstPerformingTag = Object.entries(leadsByTag).length > 0 
+    ? Object.entries(leadsByTag).reduce((a, b) => 
+        leadsByTag[a[0]] < leadsByTag[b[0]] ? a : b
+      )[0]
+    : "Sem tag";
+    
+  // Contagem de leads por tag com valores altos (até 500k e +500k)
+  const highValueLeadsByTag = leads.reduce((acc, lead) => {
+    if (lead.tag && (lead.fat_deposito === "até 500k" || lead.fat_deposito === "+500k")) {
+      acc[lead.tag] = (acc[lead.tag] || 0) + 1;
+    }
+    return acc;
+  }, {} as Record<string, number>);
+  
+  // Tag com mais potencial (mais leads com valores altos)
+  const highestPotentialTag = Object.entries(highValueLeadsByTag).length > 0 
+    ? Object.entries(highValueLeadsByTag).reduce((a, b) => 
+        highValueLeadsByTag[a[0]] > highValueLeadsByTag[b[0]] ? a : b
+      )[0]
+    : "Sem tag";
+  
+  // Número de leads com valores altos para a tag com mais potencial
+  const highestPotentialTagCount = highestPotentialTag !== "Sem tag" ? 
+    highValueLeadsByTag[highestPotentialTag] : 0;
 
   // Faturamento potencial total
   const totalRevenuePotential = leads.reduce((sum, lead) => {
@@ -31,6 +61,9 @@ export const calculateKPIs = (leads: Lead[]) => {
     totalLeads,
     leadsByTag,
     bestPerformingTag,
+    worstPerformingTag,
+    highestPotentialTag,
+    highestPotentialTagCount,
     totalRevenuePotential,
     chartDataByTag
   };

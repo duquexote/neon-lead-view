@@ -1,5 +1,4 @@
-import { useState, useMemo } from "react";
-import { mockLeads } from "@/data/mockLeads";
+import { useState, useMemo, useEffect } from "react";
 import { KPICard } from "@/components/dashboard/KPICard";
 import { ChartCard } from "@/components/dashboard/ChartCard";
 import { LeadsTable } from "@/components/dashboard/LeadsTable";
@@ -7,13 +6,23 @@ import { FilterBar } from "@/components/dashboard/FilterBar";
 import { filterLeadsByDate } from "@/utils/dateFilters";
 import { calculateKPIs, getLeadsByPeriod, formatCurrency } from "@/utils/dashboardAnalytics";
 import { BarChart3, Users, TrendingUp, DollarSign } from "lucide-react";
+import { fetchLeads } from "@/services/leadService";
+import { Lead } from "@/lib/supabase";
+import { useQuery } from "@tanstack/react-query";
 
 const Index = () => {
   const [activeFilter, setActiveFilter] = useState("all");
+  
+  // Buscar dados do Supabase
+  const { data: leads = [], isLoading, error } = useQuery<Lead[]>({
+    queryKey: ['leads'],
+    queryFn: fetchLeads
+  });
+
 
   const filteredLeads = useMemo(() => {
-    return filterLeadsByDate(mockLeads, activeFilter);
-  }, [activeFilter]);
+    return filterLeadsByDate(leads, activeFilter);
+  }, [leads, activeFilter]);
 
   const kpis = useMemo(() => {
     return calculateKPIs(filteredLeads);
@@ -22,6 +31,29 @@ const Index = () => {
   const leadsOverTime = useMemo(() => {
     return getLeadsByPeriod(filteredLeads);
   }, [filteredLeads]);
+  
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-dashboard-bg p-6 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-neon-orange mx-auto"></div>
+          <p className="mt-4 text-foreground">Carregando dados...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-dashboard-bg p-6 flex items-center justify-center">
+        <div className="text-center text-red-500">
+          <p className="text-xl">Erro ao carregar dados</p>
+          <p className="mt-2">{(error as Error).message}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-dashboard-bg p-6">
@@ -55,7 +87,7 @@ const Index = () => {
           <KPICard
             title="Melhor Tag"
             value={kpis.bestPerformingTag}
-            subtitle={`${kpis.leadsByTag[kpis.bestPerformingTag]} leads`}
+            subtitle={`${kpis.leadsByTag[kpis.bestPerformingTag] || 0} leads`}
             highlight={true}
           />
           <KPICard
@@ -66,14 +98,26 @@ const Index = () => {
             trendValue="+8%"
           />
           <KPICard
-            title="Taxa de Conversão"
-            value="3.4%"
-            subtitle="Média das LPs"
-            trend="neutral"
-            trendValue="0%"
+            title="Pior Tag"
+            value={kpis.worstPerformingTag}
+            subtitle={`${kpis.leadsByTag[kpis.worstPerformingTag] || 0} leads`}
+            trend="down"
+            trendValue="-"
           />
         </div>
 
+        {/* Tag com mais potencial */}
+        <div className="mb-6">
+          <KPICard
+            title="TAG com mais Potencial"
+            value={kpis.highestPotentialTag}
+            subtitle={`${kpis.highestPotentialTagCount} leads com valores altos`}
+            trend="up"
+            trendValue="+"
+            highlight={true}
+          />
+        </div>
+        
         {/* Charts Row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <ChartCard
@@ -93,6 +137,7 @@ const Index = () => {
             height={300}
           />
         </div>
+        
 
         {/* Leads Table */}
         <LeadsTable leads={filteredLeads} />

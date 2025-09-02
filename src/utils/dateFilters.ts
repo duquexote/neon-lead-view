@@ -1,4 +1,4 @@
-import { Lead } from "@/data/mockLeads";
+import { Lead } from "@/lib/supabase";
 
 export const filterLeadsByDate = (leads: Lead[], filter: string): Lead[] => {
   const now = new Date();
