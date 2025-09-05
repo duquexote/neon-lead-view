@@ -8,6 +8,7 @@ interface KPICardProps {
   trend?: "up" | "down" | "neutral";
   trendValue?: string;
   highlight?: boolean;
+  icon?: React.ReactNode;
 }
 
 export const KPICard = ({ 
@@ -16,12 +17,16 @@ export const KPICard = ({
   subtitle, 
   trend, 
   trendValue,
-  highlight = false 
+  highlight = false,
+  icon
 }: KPICardProps) => {
   return (
     <Card className={`p-6 bg-kpi-card border-border ${highlight ? 'ring-2 ring-neon-orange' : ''}`}>
       <div className="space-y-2">
-        <h3 className="text-muted-foreground text-sm font-medium">{title}</h3>
+        <div className="flex items-center gap-2">
+          {icon && icon}
+          <h3 className="text-muted-foreground text-sm font-medium">{title}</h3>
+        </div>
         <div className="flex items-center justify-between">
           <span className={`text-3xl font-bold ${highlight ? 'text-neon-orange' : 'text-foreground'}`}>
             {value}

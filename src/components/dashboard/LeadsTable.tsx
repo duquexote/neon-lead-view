@@ -16,6 +16,7 @@ export const LeadsTable = ({ leads }: LeadsTableProps) => {
   const getTagColor = (tag: string | null) => {
     if (!tag) return "text-muted-foreground";
     if (tag.includes("BIO IGOR")) return "text-neon-orange";
+    if (tag.includes("CR 10 | LEVA 1")) return "text-amber-500";
     if (tag.includes("CR 1")) return "text-blue-400";
     if (tag.includes("CR 2")) return "text-green-400";
     if (tag.includes("CR 3")) return "text-purple-400";
@@ -44,6 +45,7 @@ export const LeadsTable = ({ leads }: LeadsTableProps) => {
                 <TableHead className="text-muted-foreground font-semibold">Email</TableHead>
                 <TableHead className="text-muted-foreground font-semibold">Telefone</TableHead>
                 <TableHead className="text-muted-foreground font-semibold">Potencial</TableHead>
+                <TableHead className="text-muted-foreground font-semibold">Expertise</TableHead>
                 <TableHead className="text-muted-foreground font-semibold">Tag</TableHead>
                 <TableHead className="text-muted-foreground font-semibold">Data</TableHead>
               </TableRow>
@@ -59,6 +61,9 @@ export const LeadsTable = ({ leads }: LeadsTableProps) => {
                   <TableCell className="text-muted-foreground">{lead.telefone}</TableCell>
                   <TableCell className={getFatDepositoColor(lead.fat_deposito)}>
                     {lead.fat_deposito}
+                  </TableCell>
+                  <TableCell className="text-muted-foreground">
+                    {lead.expertise || "-"}
                   </TableCell>
                   <TableCell className={`font-medium ${getTagColor(lead.tag)}`}>
                     {lead.tag}

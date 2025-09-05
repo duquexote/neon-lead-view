@@ -45,6 +45,25 @@ export const calculateKPIs = (leads: Lead[]) => {
   const highestPotentialTagCount = highestPotentialTag !== "Sem tag" ? 
     highValueLeadsByTag[highestPotentialTag] : 0;
     
+  // Leads por expertise
+  const leadsByExpertise = leads.reduce((acc, lead) => {
+    if (lead.expertise) {
+      acc[lead.expertise] = (acc[lead.expertise] || 0) + 1;
+    }
+    return acc;
+  }, {} as Record<string, number>);
+
+  // Expert com mais leads
+  const topExpert = Object.entries(leadsByExpertise).length > 0 
+    ? Object.entries(leadsByExpertise).reduce((a, b) => 
+        leadsByExpertise[a[0]] > leadsByExpertise[b[0]] ? a : b
+      )[0]
+    : "Sem expert";
+  
+  // Número de leads do expert com mais leads
+  const topExpertCount = topExpert !== "Sem expert" ? 
+    leadsByExpertise[topExpert] : 0;
+    
   // Cálculo de média de leads por dia
   const dateMap = leads.reduce((acc, lead) => {
     const date = lead.created_at.split('T')[0]; // Formato YYYY-MM-DD
@@ -74,6 +93,8 @@ export const calculateKPIs = (leads: Lead[]) => {
     worstPerformingTag,
     highestPotentialTag,
     highestPotentialTagCount,
+    topExpert,
+    topExpertCount,
     averageLeadsPerDay,
     totalRevenuePotential,
     chartDataByTag

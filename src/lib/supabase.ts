@@ -15,6 +15,7 @@ export type Lead = {
   created_at: string;
   instagram: string | null;
   id_trello: string | null;
+  expertise: string | null;
 };
 
 export const fatDepositoValues: { [key: string]: number } = {
